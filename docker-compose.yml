@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  db:
+    image: redis:6.0.12-alpine
+    command: redis-server --requirepass mipassword
+    ports:
+      - "6379:6379"
+    hostname: db
+  nestdockerapp:
+    image: nestdockerapp
+    build:
+      context: .
+      target: development
+    env_file: 
+      - .env
+    volumes: 
+      - .:/usr/src/app
+      #- /usr/src/app/node_modules
+    command: npm run start:dev
+    environment:
+      NODE_ENV: development
+      TZ: "America/Bogota"
+    depends_on: 
+      - db
+    ports:
+      - 3000:3000
